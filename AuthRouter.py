@@ -44,7 +44,7 @@ def register(data: UserSchema, db: Session = Depends(get_db)):
 
 
 @Auth_router.post("/login", status_code=status.HTTP_200_OK, response_model=LoginSchemaResponse)
-def login(data: LoginSchema, Authorize: AuthJWT = Depends(), db: Session = Depends(get_db), response: Response = None):
+def login(data: LoginSchema, Authorize: AuthJWT = Depends(), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == data.username).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="user not found")
@@ -54,9 +54,7 @@ def login(data: LoginSchema, Authorize: AuthJWT = Depends(), db: Session = Depen
     access_token = Authorize.create_access_token(subject=str(user.id))
     refresh_token = Authorize.create_refresh_token(subject=str(user.id))
 
-    # 👇 sets HttpOnly cookies in response
-    # Authorize.set_access_cookies(access_token, response)
-    # Authorize.set_refresh_cookies(refresh_token, response)
+   
 
     return {
         "id": user.id,

@@ -32,3 +32,25 @@ class LoginSchemaResponse(BaseModel):
     email: EmailStr
     access_token: str 
     refresh_token: str 
+
+
+
+class BlogCreateSchema(BaseModel):
+    title:str
+    body:str
+
+class MyBlogCreateSchema(BaseModel):
+    id:UUID
+    title:str
+    body:str
+
+    class Config:
+        orm_mode=True
+class BlogCreateSchemaResponse(BaseModel):
+    id:UUID
+    title:str
+    body:str
+    userowner:UserSchemaResponse
+
+    class Config:
+        orm_mode=True
