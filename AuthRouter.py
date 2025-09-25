@@ -1,9 +1,10 @@
-from fastapi import APIRouter , Depends , status ,HTTPException
+from fastapi import APIRouter , Depends , status ,HTTPException, Response
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from fastapi_jwt_auth import AuthJWT
-from pydantic import BaseModel
 from database import get_db
+from jwt_config import Settings
+
 from schema import UserSchema , UserSchemaResponse,LoginSchema,LoginSchemaResponse
 from models import User
 
@@ -14,13 +15,7 @@ Auth_router = APIRouter(
 )
 
 
-class Settings(BaseModel):
-    authjwt_secret_key: str = "secret"
 
-# callback to get your configuration
-@AuthJWT.load_config
-def get_config():
-    return Settings()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hash_password(password: str) -> str:
@@ -48,20 +43,25 @@ def register(data: UserSchema, db: Session = Depends(get_db)):
     return new_user
 
 
-@Auth_router.post("/login" ,status_code=status.HTTP_200_OK , response_model=LoginSchemaResponse)
-def login(data:LoginSchema ,  Authorize: AuthJWT =Depends()  , db:Session =Depends(get_db)):
-    user =db.query(User).filter(User.username == data.username).first()
+@Auth_router.post("/login", status_code=status.HTTP_200_OK, response_model=LoginSchemaResponse)
+def login(data: LoginSchema, Authorize: AuthJWT = Depends(), db: Session = Depends(get_db), response: Response = None):
+    user = db.query(User).filter(User.username == data.username).first()
     if not user:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST , detail = "user not found")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="user not found")
     if not pwd_context.verify(data.password, user.password):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect password")
+
     access_token = Authorize.create_access_token(subject=str(user.id))
     refresh_token = Authorize.create_refresh_token(subject=str(user.id))
 
+    # 👇 sets HttpOnly cookies in response
+    # Authorize.set_access_cookies(access_token, response)
+    # Authorize.set_refresh_cookies(refresh_token, response)
+
     return {
-    "id": user.id,
-    "username": user.username,
-    "email": user.email,
-    "access_token": access_token,
-    "refresh_token":refresh_token
-}
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+    }
