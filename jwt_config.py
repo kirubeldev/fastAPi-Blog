@@ -1,11 +1,10 @@
 # jwt_config.py
-from fastapi import Request
-from fastapi.responses import JSONResponse
+from fastapi import Request 
+from fastapi.responses import JSONResponse 
 from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from pydantic import BaseModel
 
-# Settings for AuthJWT
 class Settings(BaseModel):
     authjwt_secret_key: str = "secret"
     authjwt_token_location: set = {"headers", "cookies"}  # Use headers and cookies
@@ -17,7 +16,6 @@ class Settings(BaseModel):
 def get_config():
     return Settings()
 
-# Exception handler that works safely in Python 3.12
 def register_jwt_exception_handler(app):
     @app.exception_handler(AuthJWTException)
     async def authjwt_exception_handler(request: Request, exc):

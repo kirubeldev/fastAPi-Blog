@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
 
 async def check_jwt_middleware(request: Request, call_next):
-    public_paths = {"/api/v1/login", "/api/v1/register", "/docs", "/openapi.json"}
+    public_paths = {"/api/v1/login", "/api/v1/register", "/docs", "/openapi.json" , "/"}
 
     if request.url.path not in public_paths:
         try:
