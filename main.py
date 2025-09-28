@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 
 from database import Base, engine
-from src.auth.AuthRouter import Auth_router
-from src.blog.BlogRouter import Blog_router
+from src.Routers.auth.AuthRouter import Auth_router
+from src.Routers.blog.BlogRouter import Blog_router
 from middleware import check_jwt_middleware
 from jwt_config import register_jwt_exception_handler
 from swagger_api import custom_openapi
