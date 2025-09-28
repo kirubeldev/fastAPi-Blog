@@ -2,14 +2,16 @@ from fastapi import APIRouter , Depends , status ,HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from fastapi_jwt_auth import AuthJWT
+from typing import Optional 
 from database import get_db
 from jwt_config import Settings
 from email.message import EmailMessage
 import smtplib
 from Email_config import send_email , login_html , registration_html
 from dotenv import load_dotenv
-from schema import UserSchema , UserSchemaResponse,LoginSchema,LoginSchemaResponse
+from schema import UserSchema , UserSchemaResponse,LoginSchema,LoginSchemaResponse, Forgot_password
 from models import User
+from datetime import datetime
 import os
 load_dotenv()
 
@@ -61,11 +63,38 @@ def login(data: LoginSchema, background_tasks: BackgroundTasks ,Authorize: AuthJ
     refresh_token = Authorize.create_refresh_token(subject=str(user.id))
 
    
-
+ 
     return {
         "id": user.id,
         "username": user.username,
         "email": user.email,
+        "status": user.status,
+        "created_at": user.created_at,
         "access_token": access_token,
         "refresh_token": refresh_token,
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
