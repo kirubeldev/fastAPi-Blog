@@ -9,8 +9,8 @@ from email.message import EmailMessage
 import smtplib
 from Email_config import send_email , login_html , registration_html
 from dotenv import load_dotenv
-from schema import UserSchema , UserSchemaResponse,LoginSchema,LoginSchemaResponse, Forgot_password
-from models import User
+from schemas.schema import UserSchema , UserSchemaResponse,LoginSchema,LoginSchemaResponse, Forgot_password
+from models.models import User
 from datetime import datetime
 import os
 load_dotenv()

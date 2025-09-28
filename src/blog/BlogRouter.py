@@ -2,9 +2,9 @@ from fastapi import APIRouter , Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from database import get_db
 from fastapi_jwt_auth import AuthJWT
-from models import Blog
+from models.models import Blog
 from uuid import UUID
-from schema import BlogCreateSchema , BlogCreateSchemaResponse,MyBlogCreateSchema
+from schemas.schema import BlogCreateSchema , BlogCreateSchemaResponse,MyBlogCreateSchema
 
 Blog_router = APIRouter(
     prefix="/api/v1",
